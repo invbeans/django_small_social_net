@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Пользователи сайта</title>
+    </head>
+    <body>
+        <h1>Список продвинутых пользователей smallserver!</h1>
+        {% for user in all_registered_users %}
+        <a href="{% url 'show_user' user.id %}"><h4>{{ user.login }} {{ user.name }} {{ user.surname }}</h4></a><hr><br>
+        {% endfor %}
+    </body>
+</html>

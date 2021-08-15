@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Посты юзера</title>
+    </head>
+    <body>
+        <a href="{% url 'show_user' current_registered_user.id %}"><h1>Приветик, {{ current_registered_user.login }}!</h1></a>
+        <h2>{{ current_registered_user.name }} {{ current_registered_user.surname }} {{ current_registered_user.fathers_name }}</h2>
+        <h3>Посты:</h3>
+        <a href = "{% url 'addpost' current_registered_user.id %}">Написать</a>
+        {% for user_post in current_user_posts %}
+        <a href = "{% url 'current_post' current_registered_user.id user_post.id %}"><h4>{{ user_post.title }} :: {{ user_post.datetime }}</h4></a>
+        <p><pre>{{ user_post.content }}</pre></p>
+        <p>♡ {{ user_post.amount_likes }}</p><hr><br>
+        
+        {% endfor %}
+        
+    </body>
+</html>
