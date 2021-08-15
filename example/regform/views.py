@@ -71,10 +71,14 @@ def one_user_posts(request, registered_user_id):
         return render(request, 'regform/otheruserposts.html', context)
 
 def current_post(request, registered_user_id, post_id):
+    user_id = request.session['user_id']
     current_post = UserPost.objects.get(pk=post_id)
     current_registered_user = RegisteredUser.objects.get(pk=registered_user_id)
     context = {'current_post': current_post, 'current_registered_user': current_registered_user}
-    return render(request, 'regform/onepost.html', context)
+    if(current_registered_user.id == user_id):
+        return render(request, 'regform/onepost.html', context)
+    else:
+        return render(request, 'regform/otheronepost.html', context)
 
 class RegisteredUserCreateView(CreateView):
     template_name = 'regform/create.html'
