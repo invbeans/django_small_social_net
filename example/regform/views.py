@@ -33,7 +33,7 @@ def loginpage(request):
     current_registered_user = RegisteredUser.objects.get(pk=1)
     request.session['user_id'] = 0
     try:
-        current_registered_user = RegisteredUser.objects.get(login=login)
+        current_registered_user = RegisteredUser.objects.get(login=login, password=password)
         registered_user_id = current_registered_user.pk
         request.session['user_login'] = current_registered_user.login
         request.session['user_name'] = current_registered_user.name
@@ -51,9 +51,10 @@ def loginpage(request):
 
 def show_user(request, registered_user_id):
     user_id = request.session['user_id']
+    current_registered_user = RegisteredUser.objects.get(pk=registered_user_id)
     #def get_user_id(self, **kwargs):
      #   user_id = self.kwargs['pk']
-    current_registered_user = RegisteredUser.objects.get(pk=registered_user_id)
+    
     context = {'current_registered_user': current_registered_user, 'registered_user_id': registered_user_id}
     if(user_id == registered_user_id):
         return render(request, 'regform/userpage.html', context)
@@ -83,12 +84,32 @@ def current_post(request, registered_user_id, post_id):
 class RegisteredUserCreateView(CreateView):
     template_name = 'regform/create.html'
     form_class = RegisteredUserForm
-    success_url = reverse_lazy('happynew')
+    success_url = reverse_lazy('loginpage')
 
+    #def get_success_url(self):
+     #   login = self.request.POST.get('login')
+      #  password = self.request.POST.get('password')
+       # new_user = RegisteredUser.objects.get(login=login, password=password)
+        #user_id = new_user.id
+        #newby = True
+        #context = {'user_id': user_id, 'newby': newby}
+        #self.request.session['user_id'] = user_id 
+        #return reverse('show_user', args=[user_id])    
+
+    #success_url = redirect('regform/userpage.html', user_id)
+    #user_id = RegisteredUser.objects.all().last()
+    #context = {'registered_user_id': user_id}
+    #success_url = reverse('show_user', args=[user_id])
+    #def get_success_url(request):
+      #  current_user = RegisteredUser.objects.last()
+       # user_id = current_user.id
+        #request.args['user_id'] = user_id
+        #return render(request, 'regform/userpage.html', {'registered_user_id': user_id})
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['registered_users'] = RegisteredUser.objects.all()
         return context
+    
 
 class UserPostCreateView(CreateView):
     template_name = 'regform/addpost.html'
