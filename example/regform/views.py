@@ -42,69 +42,96 @@ def loginpage(request):
         request.session['user_age'] = current_registered_user.age
         request.session['user_email'] = current_registered_user.email
         request.session['user_id'] = registered_user_id
+        request.session['user_custom_url'] = current_registered_user.custom_url
         #context = {'current_registered_user': current_registered_user, 'registered_user_id': registered_user_id}
+        if(current_registered_user.custom_url):
+            return redirect('show_user', current_registered_user.custom_url)
         return redirect('show_user', registered_user_id)
     except current_registered_user.DoesNotExist:
         print('oops')
     return render(request, 'regform/loginpage.html')
 
 
-def show_user(request, registered_user_id):
-    user_id = request.session['user_id']
-    current_registered_user = RegisteredUser.objects.get(pk=registered_user_id)
+def show_user(request, param):
+    is_int = (type(param) == int)
+    user_id = 0
+    user_custom_url = None
+    if(is_int):
+        user_id = request.session['user_id']
+    else:
+        user_custom_url = request.session['user_custom_url']
+    if(is_int):
+        current_registered_user = RegisteredUser.objects.get(pk=param)
+        context = {'current_registered_user': current_registered_user, 'registered_user_id': param}
+        if(user_id == param):
+            return render(request, 'regform/userpage.html', context)
+        else:
+            return render(request, 'regform/otheruserpage.html', context)
+    else:
+        current_registered_user = RegisteredUser.objects.get(custom_url=param)
+        context = {'current_registered_user': current_registered_user, 'custom_url': param}
+        if(user_custom_url == param):
+            return render(request, 'regform/userpage.html', context)
+        else:
+            return render(request, 'regform/otheruserpage.html', context)
     #def get_user_id(self, **kwargs):
      #   user_id = self.kwargs['pk']
     
-    context = {'current_registered_user': current_registered_user, 'registered_user_id': registered_user_id}
-    if(user_id == registered_user_id):
-        return render(request, 'regform/userpage.html', context)
-    else:
-        return render(request, 'regform/otheruserpage.html', context)
+    
 
-def one_user_posts(request, registered_user_id):
-    user_id = request.session['user_id']
-    current_user_posts = UserPost.objects.filter(user__id = registered_user_id)
-    current_registered_user = RegisteredUser.objects.get(pk=registered_user_id)
-    context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'registered_user_id': registered_user_id}
-    if(registered_user_id == user_id):
-        return render(request, 'regform/userposts.html', context)
+def one_user_posts(request, param):
+    is_int = (type(param) == int)
+    user_id = 0
+    user_custom_url = None
+    if(is_int):
+        user_id = request.session['user_id']
+        current_user_posts = UserPost.objects.filter(user__id = param)
+        current_registered_user = RegisteredUser.objects.get(id = param)
+        context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'param': param}
+        if(param == user_id):
+            return render(request, 'regform/userposts.html', context)
+        else:
+            return render(request, 'regform/otheruserposts.html', context)
     else:
-        return render(request, 'regform/otheruserposts.html', context)
+        user_custom_url = request.session['user_custom_url']
+        current_user_posts = UserPost.objects.filter(user__custom_url = param)
+        current_registered_user = RegisteredUser.objects.get(custom_url = param)
+        context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'param': param}
+        if(param == user_custom_url):
+            return render(request, 'regform/userposts.html', context)
+        else:
+            return render(request, 'regform/otheruserposts.html', context)
+    
+    
 
-def current_post(request, registered_user_id, post_id):
-    user_id = request.session['user_id']
-    current_post = UserPost.objects.get(pk=post_id)
-    current_registered_user = RegisteredUser.objects.get(pk=registered_user_id)
-    context = {'current_post': current_post, 'current_registered_user': current_registered_user}
-    if(current_registered_user.id == user_id):
-        return render(request, 'regform/onepost.html', context)
+def current_post(request, param, post_id):
+    is_int = (type(param) == int)
+    user_id = 0
+    user_custom_url = None
+    if(is_int):
+        user_id = request.session['user_id']
+        current_post = UserPost.objects.get(id = post_id)
+        current_registered_user = RegisteredUser.objects.get(id = param)
+        context = {'current_post': current_post, 'current_registered_user': current_registered_user}
+        if(current_registered_user.id == user_id):
+            return render(request, 'regform/onepost.html', context)
+        else:
+            return render(request, 'regform/otheronepost.html', context)
     else:
-        return render(request, 'regform/otheronepost.html', context)
+        user_custom_url = request.session['user_custom_url']
+        current_post = UserPost.objects.get(id = post_id)
+        current_registered_user = RegisteredUser.objects.get(custom_url = param)
+        context = {'current_post': current_post, 'current_registered_user': current_registered_user}
+        if(current_registered_user.custom_url == user_custom_url):
+            return render(request, 'regform/onepost.html', context)
+        else:
+            return render(request, 'regform/otheronepost.html', context)
 
 class RegisteredUserCreateView(CreateView):
     template_name = 'regform/create.html'
     form_class = RegisteredUserForm
     success_url = reverse_lazy('loginpage')
 
-    #def get_success_url(self):
-     #   login = self.request.POST.get('login')
-      #  password = self.request.POST.get('password')
-       # new_user = RegisteredUser.objects.get(login=login, password=password)
-        #user_id = new_user.id
-        #newby = True
-        #context = {'user_id': user_id, 'newby': newby}
-        #self.request.session['user_id'] = user_id 
-        #return reverse('show_user', args=[user_id])    
-
-    #success_url = redirect('regform/userpage.html', user_id)
-    #user_id = RegisteredUser.objects.all().last()
-    #context = {'registered_user_id': user_id}
-    #success_url = reverse('show_user', args=[user_id])
-    #def get_success_url(request):
-      #  current_user = RegisteredUser.objects.last()
-       # user_id = current_user.id
-        #request.args['user_id'] = user_id
-        #return render(request, 'regform/userpage.html', {'registered_user_id': user_id})
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['registered_users'] = RegisteredUser.objects.all()
@@ -114,20 +141,34 @@ class RegisteredUserCreateView(CreateView):
 class UserPostCreateView(CreateView):
     template_name = 'regform/addpost.html'
     user_id = 0
+    user_custom_url = None
     form_class = UserPostForm
     success_url = reverse_lazy('zaglushka')
     def get_user_id(self, **kwargs):
-        user_id = self.kwargs['pk']
+        if(type(self.kwargs['param']) == int):
+            user_id = self.kwargs['param']
+        else:
+            user_custom_url = self.kwargs['param']
     def get_success_url(self):
-        return reverse('one_user_posts', args=[self.user.id])
+        if(type(self.kwargs['param']) == int):
+            return reverse('one_user_posts', args=[self.user.id])
+        else:
+            return reverse('one_user_posts', args=[self.user.custom_url])
     def get_context_data(self, **kwargs):
-        self.user = get_object_or_404(RegisteredUser, id=self.kwargs['pk'])
+        if(type(self.kwargs['param']) == int):
+            self.user = get_object_or_404(RegisteredUser, id=self.kwargs['param'])
+        else:
+            self.user = get_object_or_404(RegisteredUser, custom_url=self.kwargs['param'])
         kwargs['user'] = self.user
         return super().get_context_data(**kwargs)
     def form_valid(self, form):
-        self.user = get_object_or_404(RegisteredUser, id=self.kwargs['pk'])
+        if(type(self.kwargs['param']) == int):
+            self.user = get_object_or_404(RegisteredUser, id=self.kwargs['param'])
+        else:
+            self.user = get_object_or_404(RegisteredUser, custom_url=self.kwargs['param'])
         form.instance.user = self.user
         return super().form_valid(form)
+
 
 class UserPostDeleteView(DeleteView):
     template_name='regform/deletepost.html'
@@ -137,14 +178,22 @@ class UserPostDeleteView(DeleteView):
         userpost = get_object_or_404(UserPost, id = self.kwargs['post_id'])
         return userpost
     def get_success_url(self):
-        return reverse('one_user_posts', args=[self.kwargs['pk']])
+        return reverse('one_user_posts', args=[self.kwargs['param']])
 
 
 class RegisteredUserUpdateView(UpdateView):
     template_name= 'regform/update.html'
     model = RegisteredUser
-    success_url = reverse_lazy('happyold')
-    fields = ('login', 'password', 'name', 'surname', 'fathers_name', 'age', 'email')
+    def get_success_url(self):
+        if(self.request.POST['save']):
+            return reverse_lazy('happyold')
+    fields = ('login', 'password', 'name', 'surname', 'fathers_name', 'age', 'email', 'custom_url')
+    #def get_custom_url(self):
+     #   custom_url = self.request.PUT.get('custom_url')
+      #  return custom_url
+
+    #custom_url = get_custom_url
+
     def get_object(self):
         current_registered_user = get_object_or_404(RegisteredUser, id = self.request.session['user_id'])
         self.request.session['user_login'] = current_registered_user.login
@@ -153,5 +202,13 @@ class RegisteredUserUpdateView(UpdateView):
         self.request.session['user_fathers_name'] = current_registered_user.fathers_name
         self.request.session['user_age'] = current_registered_user.age
         self.request.session['user_email'] = current_registered_user.email
+        self.request.session['user_custom_url'] = current_registered_user.custom_url
         return current_registered_user
+
+    #custom_url = get_custom_url
+    #current_registered_user = get_object
+    #if(custom_url != ''):
+     #   current_registered_user.custom_url = custom_url
+        
+
     

@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import DateField, DateTimeField
 from django.urls import reverse
+from django.core import validators
 
 # Create your models here.
 class RegisteredUser(models.Model):
@@ -15,7 +16,9 @@ class RegisteredUser(models.Model):
     age = models.SmallIntegerField(verbose_name='Возраст', blank = True)
     email = models.EmailField(verbose_name='Почта', blank = True)
     problematic = models.BooleanField(verbose_name='Нарушения', default = False, editable = False)
+    custom_url = models.SlugField(max_length=30, unique=True, verbose_name='Пользовательский url (по желанию)', blank=True, null=True, validators=[validators.RegexValidator(regex="^(?=.*[a-zA-Z])", message="Пользовательский url обязан иметь хотя бы одну букву")])
 
+#validate_slug
 class UserPost(models.Model):
     def __str__(self):
         return self.name
@@ -31,4 +34,4 @@ class UserPost(models.Model):
     class Meta:
         verbose_name='Пост пользователя'
         verbose_name_plural='Посты пользователя'
-        ordering = ['datetime']
+        ordering = ['-datetime']

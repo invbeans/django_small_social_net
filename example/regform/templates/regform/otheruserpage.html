@@ -6,7 +6,7 @@
     </head>
     <body>
         <h1>Любопытен {{ current_registered_user.login }}?</h1>
-        <a href="{% url 'one_user_posts' current_registered_user.id %}">Его посты</a>
+        <a href="{% if current_registered_user.custom_url %}{% url 'one_user_posts' current_registered_user.custom_url %}{% else %}{% url 'one_user_posts' current_registered_user.id %}{% endif %}">Его посты</a>
         <h3>Информация о пользователе:</h3>
         <p>Имя: {{ current_registered_user.name }}</p>
         <p>Фамилия: {{ current_registered_user.surname }}</p>

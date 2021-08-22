@@ -7,7 +7,7 @@
     <body>
         <h1>Список продвинутых пользователей smallserver!</h1>
         {% for user in all_registered_users %}
-        <a href="{% url 'show_user' user.id %}"><h4>{{ user.login }} {{ user.name }} {{ user.surname }}</h4></a><hr><br>
+        <a href="{% if user.custom_url %}{% url 'show_user' user.custom_url %}{% else %}{% url 'show_user' user.id %}{% endif %}"><h4>{{ user.login }} {{ user.name }} {{ user.surname }}</h4></a><hr><br>
         {% endfor %}
     </body>
 </html>
