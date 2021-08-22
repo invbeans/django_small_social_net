@@ -6,7 +6,7 @@
     </head>
     <body>
         <h1>Привет юзер {{ request.session.user_login }}!</h1>
-        <a href="{% if current_registered_user.custom_url %}{% url 'update' request.session.user_custom_url %}{% else %}{% url 'delete' request.session.user_id %}{% endif %}">Отредактировать</a>
+        <a href="{% if current_registered_user.custom_url %}{% url 'update' request.session.user_custom_url %}{% else %}{% url 'update' request.session.user_id %}{% endif %}">Отредактировать</a>
         <a href="{% if current_registered_user.custom_url %}{% url 'one_user_posts' current_registered_user.custom_url %}{% else %}{% url 'one_user_posts' current_registered_user.id %}{% endif %}">Твои посты</a>
         <h3>Информация о пользователе:</h3>
         <p>Имя: {{ request.session.user_name }}</p>
