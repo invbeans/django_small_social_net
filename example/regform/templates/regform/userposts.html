@@ -12,7 +12,11 @@
         {% for user_post in current_user_posts %}
         <a href = "{% if current_registered_user.custom_url %}{% url 'current_post' current_registered_user.custom_url user_post.id %}{% else %}{% url 'current_post' current_registered_user.id user_post.id %}{% endif %}"><h4>{{ user_post.title }} :: {{ user_post.datetime }}</h4></a>
         <p><pre>{{ user_post.content }}</pre></p>
-        <p>♡ {{ user_post.amount_likes }}</p><hr><br>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="like" value="{{ user_post.id }}">♡{{ user_post.amount_likes }}</button>
+        </form>
+        <hr><br>
         
         {% endfor %}
         

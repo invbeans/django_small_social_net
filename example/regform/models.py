@@ -3,6 +3,7 @@ from django.db.models.deletion import CASCADE
 from django.db.models.fields import DateField, DateTimeField
 from django.urls import reverse
 from django.core import validators
+import datetime
 
 # Create your models here.
 class RegisteredUser(models.Model):
@@ -35,3 +36,31 @@ class UserPost(models.Model):
         verbose_name='Пост пользователя'
         verbose_name_plural='Посты пользователя'
         ordering = ['-datetime']
+
+class PostReact(models.Model):
+    def __str__(self):
+        return self.name
+
+    def need_to_delete(self):
+        if((datetime.now() - self.react_time).days > 30):
+            return True
+        else:
+            return False
+
+    #im not sure if it will work properly :(
+    def delete(self):
+        if self.need_to_delete():
+            super().delete()
+
+    def like_count(self):
+        record, created = PostReact.objects.get_or_create(from_post__user__id = self.from_post__user__id, react_type = 0)
+        if(created == False):
+            self.from_post__amount_likes = self.from_post__amount_likes - 1
+            record.delete()
+        else:
+            self.from_post__amount_likes = self.from_post__amount_likes + 1
+
+
+    from_post = models.ForeignKey(UserPost, on_delete=CASCADE, verbose_name="Пост с реакциями")
+    react_type = models.SmallIntegerField(blank=True, null=True, verbose_name="Лайк - 0, коммент - 1")
+    react_time = models.DateTimeField(auto_now=True, verbose_name="Время появления реакции")

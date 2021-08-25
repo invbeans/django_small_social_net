@@ -4,8 +4,9 @@ from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .forms import RegisteredUserForm, UserPostForm
-from .models import RegisteredUser, UserPost
+from .models import RegisteredUser, UserPost, PostReact
 from django.urls import reverse_lazy, reverse
+import datetime
 
 def happynew(request):
     return HttpResponse("Пользователь успешно добавлен")
@@ -83,6 +84,12 @@ def one_user_posts(request, param):
     is_int = (type(param) == int)
     user_id = 0
     user_custom_url = None
+    def get_like(self):
+        if(self.request.POST['like']):
+            liked_post_id = self.request.POST.get('like')
+            liked_post = UserPost.objects.get(id = liked_post_id)
+            rec = PostReact(liked_post, 0, datetime)
+            rec.like_count()
     if(is_int):
         user_id = request.session['user_id']
         current_user_posts = UserPost.objects.filter(user__id = param)
@@ -101,6 +108,7 @@ def one_user_posts(request, param):
             return render(request, 'regform/userposts.html', context)
         else:
             return render(request, 'regform/otheruserposts.html', context)
+    
     
     
 
