@@ -84,17 +84,16 @@ def one_user_posts(request, param):
     is_int = (type(param) == int)
     user_id = 0
     user_custom_url = None
-    def get_like(self):
-        if(self.request.POST['like']):
-            liked_post_id = self.request.POST.get('like')
-            liked_post = UserPost.objects.get(id = liked_post_id)
-            rec = PostReact(liked_post, 0, datetime)
-            rec.like_count()
+
     if(is_int):
         user_id = request.session['user_id']
         current_user_posts = UserPost.objects.filter(user__id = param)
         current_registered_user = RegisteredUser.objects.get(id = param)
         context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'param': param}
+        for post in current_user_posts:
+                if(request.POST.get('like', False)):
+                    rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
+                    rec.like_count(user_id)
         if(param == user_id):
             return render(request, 'regform/userposts.html', context)
         else:
@@ -104,6 +103,10 @@ def one_user_posts(request, param):
         current_user_posts = UserPost.objects.filter(user__custom_url = param)
         current_registered_user = RegisteredUser.objects.get(custom_url = param)
         context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'param': param}
+        for post in current_user_posts:
+                if(request.POST.get('like', False)):
+                    rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
+                    rec.like_count(current_registered_user.id)
         if(param == user_custom_url):
             return render(request, 'regform/userposts.html', context)
         else:

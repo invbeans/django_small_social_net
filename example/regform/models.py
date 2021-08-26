@@ -3,7 +3,7 @@ from django.db.models.deletion import CASCADE
 from django.db.models.fields import DateField, DateTimeField
 from django.urls import reverse
 from django.core import validators
-import datetime
+from datetime import datetime
 
 # Create your models here.
 class RegisteredUser(models.Model):
@@ -21,8 +21,6 @@ class RegisteredUser(models.Model):
 
 #validate_slug
 class UserPost(models.Model):
-    def __str__(self):
-        return self.name
     def get_absolute_url(self):
         return reverse('current_post', args=[str(self.user__id), str(self.pk)])
 
@@ -38,8 +36,9 @@ class UserPost(models.Model):
         ordering = ['-datetime']
 
 class PostReact(models.Model):
-    def __str__(self):
-        return self.name
+    from_post = models.ForeignKey(UserPost, on_delete=CASCADE, verbose_name="Пост с реакциями", null=True)
+    react_type = models.SmallIntegerField(blank=True, null=True, verbose_name="Лайк - 0, коммент - 1")
+    react_time = models.DateTimeField(auto_now=True, verbose_name="Время появления реакции")
 
     def need_to_delete(self):
         if((datetime.now() - self.react_time).days > 30):
@@ -52,15 +51,14 @@ class PostReact(models.Model):
         if self.need_to_delete():
             super().delete()
 
-    def like_count(self):
-        record, created = PostReact.objects.get_or_create(from_post__user__id = self.from_post__user__id, react_type = 0)
-        if(created == False):
-            self.from_post__amount_likes = self.from_post__amount_likes - 1
+    def like_count(self, user_id):
+        record = PostReact.objects.filter(from_post__user__id = user_id, react_type = 0)
+        if(record):
+            self.from_post.amount_likes = self.from_post.amount_likes - 1
             record.delete()
         else:
-            self.from_post__amount_likes = self.from_post__amount_likes + 1
+            record.create()
+            self.from_post.amount_likes = self.from_post.amount_likes + 1
 
 
-    from_post = models.ForeignKey(UserPost, on_delete=CASCADE, verbose_name="Пост с реакциями")
-    react_type = models.SmallIntegerField(blank=True, null=True, verbose_name="Лайк - 0, коммент - 1")
-    react_time = models.DateTimeField(auto_now=True, verbose_name="Время появления реакции")
+    
