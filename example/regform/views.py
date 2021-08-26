@@ -94,7 +94,7 @@ def one_user_posts(request, param):
             post_id = request.POST.get('like', False)
             post = UserPost.objects.get(id = post_id)
             rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
-            new_likes = rec.like_count(user_id)
+            new_likes = rec.like_count(post_id, user_id)
             UserPost.objects.filter(id = post_id).update(amount_likes = new_likes)
         if(param == user_id):
             return render(request, 'regform/userposts.html', context)
@@ -104,12 +104,13 @@ def one_user_posts(request, param):
         user_custom_url = request.session['user_custom_url']
         current_user_posts = UserPost.objects.filter(user__custom_url = param)
         current_registered_user = RegisteredUser.objects.get(custom_url = param)
+        user_id = current_registered_user.id
         context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'param': param}
         if(request.POST.get('like', False)):
             post_id = request.POST.get('like', False)
             post = UserPost.objects.get(id = post_id)
             rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
-            new_likes = rec.like_count(user_id)
+            new_likes = rec.like_count(post_id, user_id)
             UserPost.objects.filter(id = post_id).update(amount_likes = new_likes)
         if(param == user_custom_url):
             return render(request, 'regform/userposts.html', context)

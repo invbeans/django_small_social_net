@@ -3,6 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <title>Посты юзера</title>
+        <script>
+            document.getElementById("put_like").onclick = 
+            function() {
+                document.getElementById("like_trigger").submit()
+            }
+        </script>
     </head>
     <body>
         <a href="{% if current_registered_user.custom_url %}{% url 'show_user' current_registered_user.custom_url %}{% else %}{% url 'show_user' current_registered_user.id %}{% endif %}"><h1>Аккаунт юзера {{ current_registered_user.login }}!</h1></a>
@@ -11,7 +17,11 @@
         {% for user_post in current_user_posts %}
         <a href = "{% if current_registered_user.custom_url %}{% url 'current_post' current_registered_user.custom_url user_post.id %}{% else %}{% url 'current_post' current_registered_user.id user_post.id %}{% endif %}"><h4>{{ user_post.title }} :: {{ user_post.datetime }}</h4></a>
         <p><pre>{{ user_post.content }}</pre></p>
-        <p>♡ {{ user_post.amount_likes }}</p><hr><br>
+        <form id="like_trigger" action="" method="POST" name="like_trigger">
+            {% csrf_token %}
+        </form>
+        <button id="put_like" type="submit" name="like" value="{{user_post.id}}" form="like_trigger">♡{{ user_post.amount_likes }}</button>
+        <hr><br>
         
         {% endfor %}
         

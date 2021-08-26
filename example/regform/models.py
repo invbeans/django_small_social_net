@@ -39,6 +39,7 @@ class PostReact(models.Model):
     from_post = models.ForeignKey(UserPost, on_delete=CASCADE, verbose_name="Пост с реакциями", null=True)
     react_type = models.SmallIntegerField(blank=True, null=True, verbose_name="Лайк - 0, коммент - 1")
     react_time = models.DateTimeField(auto_now=True, verbose_name="Время появления реакции")
+    reacted_user_id = models.SmallIntegerField(blank=True, null=True, verbose_name="Юзер который реагирует")
 
     def need_to_delete(self):
         if((datetime.now() - self.react_time).days > 30):
@@ -51,8 +52,8 @@ class PostReact(models.Model):
         if self.need_to_delete():
             super().delete()
 
-    def like_count(self, user_id):
-        record = PostReact.objects.filter(from_post__user__id = user_id, react_type = 0)
+    def like_count(self, post_id, user_id):
+        record = PostReact.objects.filter(from_post__id = post_id, reacted_user_id = user_id, react_type = 0)
         if(record):
             self.from_post.amount_likes = self.from_post.amount_likes - 1
             record.delete()
