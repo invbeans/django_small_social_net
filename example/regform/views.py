@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .forms import RegisteredUserForm, UserPostForm
 from .models import RegisteredUser, UserPost, PostReact
 from django.urls import reverse_lazy, reverse
-import datetime
+from datetime import datetime
 
 def happynew(request):
     return HttpResponse("Пользователь успешно добавлен")
@@ -90,10 +90,12 @@ def one_user_posts(request, param):
         current_user_posts = UserPost.objects.filter(user__id = param)
         current_registered_user = RegisteredUser.objects.get(id = param)
         context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'param': param}
-        for post in current_user_posts:
-                if(request.POST.get('like', False)):
-                    rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
-                    rec.like_count(user_id)
+        if(request.POST.get('like', False)):
+            post_id = request.POST.get('like', False)
+            post = UserPost.objects.get(id = post_id)
+            rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
+            new_likes = rec.like_count(user_id)
+            UserPost.objects.filter(id = post_id).update(amount_likes = new_likes)
         if(param == user_id):
             return render(request, 'regform/userposts.html', context)
         else:
@@ -103,10 +105,12 @@ def one_user_posts(request, param):
         current_user_posts = UserPost.objects.filter(user__custom_url = param)
         current_registered_user = RegisteredUser.objects.get(custom_url = param)
         context = {'current_user_posts': current_user_posts, 'current_registered_user': current_registered_user, 'param': param}
-        for post in current_user_posts:
-                if(request.POST.get('like', False)):
-                    rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
-                    rec.like_count(current_registered_user.id)
+        if(request.POST.get('like', False)):
+            post_id = request.POST.get('like', False)
+            post = UserPost.objects.get(id = post_id)
+            rec = PostReact(from_post = post, react_type = 0, react_time = datetime.now())
+            new_likes = rec.like_count(user_id)
+            UserPost.objects.filter(id = post_id).update(amount_likes = new_likes)
         if(param == user_custom_url):
             return render(request, 'regform/userposts.html', context)
         else:

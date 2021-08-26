@@ -59,6 +59,7 @@ class PostReact(models.Model):
         else:
             record.create()
             self.from_post.amount_likes = self.from_post.amount_likes + 1
+        return self.from_post.amount_likes
 
 
     
