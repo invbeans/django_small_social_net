@@ -4,6 +4,7 @@ from django.db.models.fields import DateField, DateTimeField
 from django.urls import reverse
 from django.core import validators
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 
 # Create your models here.
 class RegisteredUser(models.Model):
@@ -85,18 +86,33 @@ class PostReact(models.Model):
             return False
 
     # im not sure if it will work properly :(
-    def delete(self):
-        if self.need_to_delete():
-            super().delete()
+    # def delete(self):
+    #   if self.need_to_delete():
+    #      super().delete()
 
     def like_count(self, post_id, user_id):
         record = PostReact.objects.filter(
-            from_post__id=post_id, reacted_user_id=user_id, react_type=0
+            from_post=UserPost.objects.get(id=post_id),
+            reacted_user_id=user_id,
+            react_type=0,
         )
-        if record:
+        if record.exists():
             self.from_post.amount_likes = self.from_post.amount_likes - 1
             record.delete()
         else:
-            record.create()
+            record = PostReact(
+                from_post=UserPost.objects.get(id=post_id),
+                react_type=0,
+                react_time=datetime.now(),
+                reacted_user_id=user_id,
+            )
+            record.save()
             self.from_post.amount_likes = self.from_post.amount_likes + 1
+
+        # if record:
+        #   self.from_post.amount_likes = self.from_post.amount_likes - 1
+        #  record.delete()
+        # else:
+        #   record.create()
+        #  self.from_post.amount_likes = self.from_post.amount_likes + 1
         return self.from_post.amount_likes

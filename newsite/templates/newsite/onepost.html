@@ -3,14 +3,25 @@
     <head>
         <meta charset="UTF-8">
         <title>Пост юзера</title>
+        <script>
+            document.getElementById("put_like").onclick =
+                function () {
+                    document.getElementById("like_trigger").submit()
+                }
+        </script>
     </head>
     <body>
-        <h1>Аккаунт юзера {{ current_registered_user.login }}!</h1>
+        <a href="{% if current_registered_user.custom_url %}{% url 'show_user' current_registered_user.custom_url %}
+        {% else %}{% url 'show_user' current_registered_user.id %}{% endif %}"><h1>Аккаунт юзера {{ current_registered_user.login }}!</h1></a>
         <h2>{{ current_registered_user.name }} {{ current_registered_user.surname }} {{ current_registered_user.fathers_name }}</h2>
         
         <h4>{{ current_post.title }} :: {{ current_post.datetime }}</h4>
         <p><pre>{{ current_post.content }}</pre></p>
-        <p>♡ {{ current_post.amount_likes }}</p>
+        <form id="like_trigger" action="" method="POST" name="like_trigger">
+            {% csrf_token %}
+        </form>
+        <button id="put_like" type="submit" name="like" value="{{user_post.id}}" form="like_trigger">♡
+            {{ current_post.amount_likes }}</button>
         <a href = "{% if current_registered_user.custom_url %}{% url 'deletepost' current_registered_user.custom_url current_post.id %}{% else %}{% url 'deletepost' current_registered_user.id current_post.id %}{% endif %}"><p>Удалить пост?</p></a><hr><br>
         
     </body>

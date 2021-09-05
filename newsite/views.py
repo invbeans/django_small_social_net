@@ -111,7 +111,8 @@ def one_user_posts(request, param):
         post_id = request.POST.get("like", False)
         post = UserPost.objects.get(id=post_id)
         rec = PostReact(from_post=post, react_type=0, react_time=datetime.now())
-        new_likes = rec.like_count(post_id, user_id)
+        liking_user_id = request.session["user_id"]
+        new_likes = rec.like_count(post_id, liking_user_id)
         UserPost.objects.filter(id=post_id).update(amount_likes=new_likes)
     if is_self == True:
         return render(request, "newsite/userposts.html", context)
@@ -140,6 +141,13 @@ def current_post(request, param, post_id):
         "current_post": current_post,
         "current_registered_user": current_registered_user,
     }
+    if request.POST.get("like", False):
+        post_id = request.POST.get("like", False)
+        post = UserPost.objects.get(id=post_id)
+        rec = PostReact(from_post=post, react_type=0, react_time=datetime.now())
+        liking_user_id = request.session["user_id"]
+        new_likes = rec.like_count(post_id, liking_user_id)
+        UserPost.objects.filter(id=post_id).update(amount_likes=new_likes)
     if is_self:
         return render(request, "newsite/onepost.html", context)
     else:
@@ -162,7 +170,6 @@ class UserPostCreateView(CreateView):
     user_id = 0
     user_custom_url = None
     form_class = UserPostForm
-    success_url = reverse_lazy("zaglushka")
 
     def get_user_id(self, **kwargs):
         if type(self.kwargs["param"]) == int:
@@ -213,10 +220,6 @@ class RegisteredUserUpdateView(UpdateView):
     template_name = "newsite/update.html"
     model = RegisteredUser
 
-    def get_success_url(self):
-        if self.request.POST["save"]:
-            return reverse_lazy("happyold")
-
     fields = (
         "login",
         "password",
@@ -240,3 +243,16 @@ class RegisteredUserUpdateView(UpdateView):
         self.request.session["user_email"] = current_registered_user.email
         self.request.session["user_custom_url"] = current_registered_user.custom_url
         return current_registered_user
+
+    def get_success_url(self):
+        if self.request.POST["save"]:
+            current_registered_user = self.get_object()
+            if current_registered_user.custom_url:
+                param = current_registered_user.custom_url
+            else:
+                param = current_registered_user.id
+            context = {
+                "current_registered_user": current_registered_user,
+                "param": param,
+            }
+            return reverse("show_user", args=[param])
