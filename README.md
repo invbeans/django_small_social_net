@@ -10,7 +10,7 @@ done:
 how to start it: 
 1) in your cmd go to ".../example"
 2) print "manage.py runserver"
-3) go to "localhost:8000/regform/" in your brawser
+3) go to "localhost:8000/newsite/" in your brawser
 
 problems:
 1) javascript is passive agressive to me...... 
