@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Пост юзера</title>
+    </head>
+    <body>
+        <h1>Аккаунт юзера {{ current_registered_user.login }}!</h1>
+        <h2>{{ current_registered_user.name }} {{ current_registered_user.surname }} {{ current_registered_user.fathers_name }}</h2>
+        
+        <h4>{{ current_post.title }} :: {{ current_post.datetime }}</h4>
+        <p><pre>{{ current_post.content }}</pre></p>
+        <p>♡ {{ current_post.amount_likes }}</p>
+        <a href = "{% if current_registered_user.custom_url %}{% url 'deletepost' current_registered_user.custom_url current_post.id %}{% else %}{% url 'deletepost' current_registered_user.id current_post.id %}{% endif %}"><p>Удалить пост?</p></a><hr><br>
+        
+    </body>
+</html>
