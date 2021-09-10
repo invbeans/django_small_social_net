@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Загрузка аватарки</title>
+</head>
+
+<body>
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Загрузить</button>
+    </form>
+
+    {% if img_obj %}
+    <h2>Ваша аватарка успешно поставлена</h2>
+    <img src="../../../{{ MEDIA_URL }}/img_obj.name" alt="connect" style="max-height:300px">
+    {% endif %}
+    
+</body>
+
+</html>

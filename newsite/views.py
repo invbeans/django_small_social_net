@@ -1,9 +1,10 @@
+import re
 from django.contrib.auth.models import User
 from django.http import request
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .forms import RegisteredUserForm, UserPostForm
+from .forms import UploadAvatarForm, RegisteredUserForm, UserPostForm
 from .models import RegisteredUser, UserPost, PostReact
 from django.urls import reverse_lazy, reverse
 from datetime import datetime
@@ -256,3 +257,22 @@ class RegisteredUserUpdateView(UpdateView):
                 "param": param,
             }
             return reverse("show_user", args=[param])
+
+
+def profile_picture_upload(request):
+    user_id = request.session["user_id"]
+    current_registered_user = RegisteredUser.objects.get(pk=user_id)
+    if request.method == "POST":
+        form = UploadAvatarForm(request.POST, request.FILES)
+        if form.is_valid:
+            # form.save(update_fields=["image"])
+            img_obj = form.instance.image
+            current_registered_user.image = img_obj
+            current_registered_user.save(update_fields=["image"])
+            img_obj = form.instance
+            context = {"form": form, "img_obj": img_obj}
+            return render(request, "newsite/uploadimage.html", context)
+    else:
+        form = UploadAvatarForm()
+    context = {"form": form}
+    return render(request, "newsite/uploadimage.html", context)

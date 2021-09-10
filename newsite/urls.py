@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    profile_picture_upload,
     all_users,
     loginpage,
     welcome,
@@ -43,5 +44,6 @@ urlpatterns = [
     ),
     path("user/<int:param>/post/<int:post_id>/", current_post, name="current_post"),
     path("user/<slug:param>/post/<int:post_id>/", current_post, name="current_post"),
+    path("upload_user_pic/", profile_picture_upload, name="profile_picture_upload"),
     # path('', index, name='index'),
 ]

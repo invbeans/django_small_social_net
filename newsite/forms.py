@@ -20,3 +20,8 @@ class UserPostForm(ModelForm):
     class Meta:
         model = UserPost
         fields = ("title", "content")
+
+class UploadAvatarForm(ModelForm):
+    class Meta:
+        model = RegisteredUser
+        fields = ('image',)
