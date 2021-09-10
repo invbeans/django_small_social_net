@@ -9,7 +9,8 @@
         <a href="{% if current_registered_user.custom_url %}{% url 'update' request.session.user_custom_url %}{% else %}{% url 'update' request.session.user_id %}{% endif %}">Отредактировать</a>
         <a href="{% if current_registered_user.custom_url %}{% url 'one_user_posts' current_registered_user.custom_url %}{% else %}{% url 'one_user_posts' current_registered_user.id %}{% endif %}">Твои посты</a>
         <h3>Информация о пользователе:</h3>
-        <p>Имя: {{ request.session.user_name }}</p>
+        <p><img src="{{ cur_user_img.url }}" alt="connect" style="max-height:50px; border-radius: 50%;">
+        Имя: {{ request.session.user_name }}</p>
         <p>Фамилия: {{ request.session.user_surname }}</p>
         <p>Отчество: {{ request.session.user_fathers_name }}</p>
         <p>Возраст: {{ request.session.user_age }}</p>

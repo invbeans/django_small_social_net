@@ -127,8 +127,25 @@ STATIC_URL = "/static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+_PATH = os.path.abspath(os.path.dirname(__file__))
+
+# MEDIA_ROOT = os.path.join(_PATH, "files", "media")
+# MEDIA_URL = "/media/"
+
+MEDIA_URL = "/newsite/templates/newsite/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "newsite/templates/newsite/media")
+
+STATIC_ROOT = os.path.join(_PATH, "files", "static")
+STATICFILES_DIRS = (os.path.join(_PATH, "static"),)
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+)
+
+ADMIN_MEDIA_PREFIX = "/static/admin/"
+
 # Base url to serve media files
-MEDIA_URL = "/media/"
+# MEDIA_URL = "/media/"
 
 # Path where media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media/")

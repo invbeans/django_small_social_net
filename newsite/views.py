@@ -8,6 +8,7 @@ from .forms import UploadAvatarForm, RegisteredUserForm, UserPostForm
 from .models import RegisteredUser, UserPost, PostReact
 from django.urls import reverse_lazy, reverse
 from datetime import datetime
+from django.core.files.storage import FileSystemStorage
 
 
 def happynew(request):
@@ -40,7 +41,7 @@ def all_users(request, **kwargs):
 def loginpage(request):
     login = request.POST.get("login")
     password = request.POST.get("password")
-    current_registered_user = RegisteredUser.objects.get(pk=1)
+    current_registered_user = RegisteredUser.objects.first()
     request.session["user_id"] = 0
     try:
         current_registered_user = RegisteredUser.objects.get(
@@ -78,7 +79,11 @@ def show_user(request, param):
         current_registered_user = RegisteredUser.objects.get(custom_url=param)
         if param == user_custom_url:
             is_self = True
-    context = {"current_registered_user": current_registered_user, "param": param}
+    context = {
+        "current_registered_user": current_registered_user,
+        "param": param,
+        "cur_user_img": current_registered_user.image,
+    }
     if is_self:
         return render(request, "newsite/userpage.html", context)
     else:
@@ -262,17 +267,25 @@ class RegisteredUserUpdateView(UpdateView):
 def profile_picture_upload(request):
     user_id = request.session["user_id"]
     current_registered_user = RegisteredUser.objects.get(pk=user_id)
-    if request.method == "POST":
-        form = UploadAvatarForm(request.POST, request.FILES)
-        if form.is_valid:
-            # form.save(update_fields=["image"])
-            img_obj = form.instance.image
-            current_registered_user.image = img_obj
-            current_registered_user.save(update_fields=["image"])
-            img_obj = form.instance
-            context = {"form": form, "img_obj": img_obj}
-            return render(request, "newsite/uploadimage.html", context)
+    if request.method == "POST" and request.FILES["myfile"]:
+        # form = UploadAvatarForm(request.POST, request.FILES)
+        # if form.is_valid:
+        # form.save(update_fields=["image"])
+        #   img_obj = form.instance
+        #  form.save()
+        # current_registered_user.image = img_obj
+        # current_registered_user.save(update_fields=["image"])
+        # img_obj = form.instance
+        newfile = request.FILES["myfile"]
+        current_registered_user.image = newfile
+        current_registered_user.save()
+        fs = FileSystemStorage()
+        filename = fs.save(newfile.name, newfile)
+        img_obj_url = fs.url(filename)
+        context = {
+            "img_obj_url": img_obj_url,
+            "cur_user_img": current_registered_user.image,
+        }
+        return render(request, "newsite/uploadimage.html", context)
     else:
-        form = UploadAvatarForm()
-    context = {"form": form}
-    return render(request, "newsite/uploadimage.html", context)
+        return render(request, "newsite/uploadimage.html")

@@ -9,15 +9,12 @@
 <body>
     <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    <input type="file" name="myfile">
     <button type="submit">Загрузить</button>
     </form>
 
-    {% if img_obj %}
-    <h2>Ваша аватарка успешно поставлена</h2>
-    <img src="../../../{{ MEDIA_URL }}/img_obj.name" alt="connect" style="max-height:300px">
-    {% endif %}
-    
+    <img src="{{ cur_user_img.url }}" alt="connect" style="max-height:300px; border-radius: 50%;">
+   
 </body>
 
 </html>

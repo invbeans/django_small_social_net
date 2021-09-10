@@ -11,7 +11,7 @@ class RegisteredUser(models.Model):
     def __str__(self):
         return self.name
 
-    image = models.ImageField(upload_to="images", blank=True, null=True)
+    image = models.ImageField(upload_to="user_media", blank=True, null=True)
     login = models.CharField(
         max_length=40, unique=True, verbose_name="Логин", blank=True
     )
