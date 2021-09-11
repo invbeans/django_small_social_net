@@ -1,6 +1,8 @@
 __This is version without that weird mistake i couldn't correct__
 old version is in branch "moving" and it includes that problem i guess. don't clone it pls, exept if you want to catch bugs :>
 
+<img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/invbeans/django_small_social_net/master?color=9cf&style=flat-square">
+
 right now my plans: understand how to clean old like-reaction records, (would take long) comments block, validation of inputted info, block list and private accounts, (probably next) add profile pics. lets code 'odnoclassniki' great again
 
 done:
