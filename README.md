@@ -20,5 +20,6 @@ problems:
 1) javascript is passive agressive to me...... 
 
 weird screenshots:
-<img src="https://user-images.githubusercontent.com/74315761/132953527-28606df4-40c4-4cac-896a-69dd77112647.png" style="max-height:50px;">
+<hr>
+<img src="https://user-images.githubusercontent.com/74315761/132953527-28606df4-40c4-4cac-896a-69dd77112647.png" style="width=50%">
 
