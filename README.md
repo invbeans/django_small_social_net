@@ -1,5 +1,3 @@
-https://img.shields.io/badge/django-suffering-9cf
-
 __This is version without that weird mistake i couldn't correct__
 old version is in branch "moving" and it includes that problem i guess. don't clone it pls, exept if you want to catch bugs :>
 
