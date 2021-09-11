@@ -24,8 +24,12 @@
         <form id="like_trigger" action="" method="POST" name="like_trigger">
             {% csrf_token %}
         </form>
-        <button id="put_like" type="submit" name="like" value="{{user_post.id}}" form="like_trigger">♡
+        <button id="put_like" type="submit" name="like" value="{{current_post.id}}" form="like_trigger">♡
             {{ current_post.amount_likes }}</button>
+        {% if current_post.amount_likes > 0 %}
+        <img src="{{ current_post.postreact_set.last.reacted_user.image.url }}" alt="connect"
+            style="max-height:15px; border-radius: 50%;">
+        {% endif %}
         
     </body>
 </html>

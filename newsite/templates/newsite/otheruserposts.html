@@ -26,6 +26,10 @@
             {% csrf_token %}
         </form>
         <button id="put_like" type="submit" name="like" value="{{user_post.id}}" form="like_trigger">♡{{ user_post.amount_likes }}</button>
+        {% if user_post.amount_likes > 0 %}
+        <img src="{{ user_post.postreact_set.last.reacted_user.image.url }}" alt="connect"
+            style="max-height:15px; border-radius: 50%;">
+        {% endif %}
         <hr><br>
         
         {% endfor %}

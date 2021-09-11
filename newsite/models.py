@@ -76,8 +76,8 @@ class PostReact(models.Model):
     react_time = models.DateTimeField(
         auto_now=True, verbose_name="Время появления реакции"
     )
-    reacted_user_id = models.SmallIntegerField(
-        blank=True, null=True, verbose_name="Юзер который реагирует"
+    reacted_user = models.ForeignKey(
+        RegisteredUser, on_delete=CASCADE, blank=True, null=True, verbose_name="Юзер который реагирует"
     )
 
     def need_to_delete(self):
@@ -94,7 +94,7 @@ class PostReact(models.Model):
     def like_count(self, post_id, user_id):
         record = PostReact.objects.filter(
             from_post=UserPost.objects.get(id=post_id),
-            reacted_user_id=user_id,
+            reacted_user=RegisteredUser.objects.get(id=user_id),
             react_type=0,
         )
         if record.exists():
@@ -105,7 +105,7 @@ class PostReact(models.Model):
                 from_post=UserPost.objects.get(id=post_id),
                 react_type=0,
                 react_time=datetime.now(),
-                reacted_user_id=user_id,
+                reacted_user=RegisteredUser.objects.get(id=user_id),
             )
             record.save()
             self.from_post.amount_likes = self.from_post.amount_likes + 1

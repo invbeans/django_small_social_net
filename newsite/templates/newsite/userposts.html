@@ -14,8 +14,10 @@
         <a href="{% if current_registered_user.custom_url %}{% url 'show_user' current_registered_user.custom_url %}{% else %}{% url 'show_user' current_registered_user.id %}{% endif %}"><h1>Приветик, {{ current_registered_user.login }}!</h1></a>
         <h2>{{ current_registered_user.name }} {{ current_registered_user.surname }} {{ current_registered_user.fathers_name }}</h2>
         <h3>Посты:</h3>
+
         <a href = "{% if current_registered_user.custom_url %}{% url 'addpost' current_registered_user.custom_url %}{% else %}{% url 'addpost' current_registered_user.id %}{% endif %}">Написать</a>
-        {% for user_post in current_user_posts %}       
+        {% for user_post in current_user_posts %}   
+
         <a href = "{% if current_registered_user.custom_url %}{% url 'current_post' current_registered_user.custom_url user_post.id %}{% else %}{% url 'current_post' current_registered_user.id user_post.id %}{% endif %}">
             <h4>
             {% if cur_user_img %}
@@ -23,10 +25,18 @@
             {% endif %}
             {{ user_post.title }} :: {{ user_post.datetime }}</h4></a>
         <p><pre>{{ user_post.content }}</pre></p>
+
         <form id="like_trigger" action="" method="POST" name="like_trigger">
             {% csrf_token %}
         </form>
-        <button id="put_like" type="submit" name="like" value="{{user_post.id}}" form="like_trigger">♡{{ user_post.amount_likes }}</button>
+
+        <button id="put_like" type="submit" name="like" value="{{user_post.id}}" form="like_trigger">
+            ♡{{ user_post.amount_likes }}
+        </button>
+        {% if user_post.amount_likes > 0 %}
+        <img src="{{ user_post.postreact_set.last.reacted_user.image.url }}" alt="connect"
+            style="max-height:15px; border-radius: 50%;">
+        {% endif %}
         <hr><br>
         
         {% endfor %}
