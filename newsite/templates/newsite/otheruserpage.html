@@ -3,16 +3,26 @@
     <head>
         <meta charset="UTF-8">
         <title>Страничка юзера</title>
+        <style>
+            p#left{
+                margin-left: 50px;
+        }
+        </style>
     </head>
     <body>
         <h1>Любопытен {{ current_registered_user.login }}?</h1>
         <a href="{% if current_registered_user.custom_url %}{% url 'one_user_posts' current_registered_user.custom_url %}{% else %}{% url 'one_user_posts' current_registered_user.id %}{% endif %}">Его посты</a>
         <h3>Информация о пользователе:</h3>
-        <p>Имя: {{ current_registered_user.name }}</p>
-        <p>Фамилия: {{ current_registered_user.surname }}</p>
-        <p>Отчество: {{ current_registered_user.fathers_name }}</p>
-        <p>Возраст: {{ current_registered_user.age }}</p>
-        <p>Почта: {{ current_registered_user.email }}</p>
+        {% if cur_user_img %}
+        <p><img src="{{ cur_user_img.url }}" alt="connect" style="max-height:50px; border-radius: 50%;" />
+            Имя: {{ current_registered_user.name }}</p>
+        {% else %}
+        <p id="left">Имя: {{ current_registered_user.name }}</p>
+        {% endif %}
+        <p id="left">Фамилия: {{ current_registered_user.surname }}</p>
+        <p id="left">Отчество: {{ current_registered_user.fathers_name }}</p>
+        <p id="left">Возраст: {{ current_registered_user.age }}</p>
+        <p id="left">Почта: {{ current_registered_user.email }}</p>
         <a href="{% url 'all_users' %}">К друзьям</a>
     </body>
 </html>

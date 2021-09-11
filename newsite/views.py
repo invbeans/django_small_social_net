@@ -41,7 +41,13 @@ def all_users(request, **kwargs):
 def loginpage(request):
     login = request.POST.get("login")
     password = request.POST.get("password")
-    current_registered_user = RegisteredUser.objects.first()
+    current_registered_user = RegisteredUser(
+        name="default",
+        surname="default",
+        fathers_name="default",
+        age=40,
+        email="default@mail.ru",
+    )
     request.session["user_id"] = 0
     try:
         current_registered_user = RegisteredUser.objects.get(
@@ -112,6 +118,7 @@ def one_user_posts(request, param):
         "current_user_posts": current_user_posts,
         "current_registered_user": current_registered_user,
         "param": param,
+        "cur_user_img": current_registered_user.image,
     }
     if request.POST.get("like", False):
         post_id = request.POST.get("like", False)
@@ -146,6 +153,7 @@ def current_post(request, param, post_id):
     context = {
         "current_post": current_post,
         "current_registered_user": current_registered_user,
+        "cur_user_img": current_registered_user.image,
     }
     if request.POST.get("like", False):
         post_id = request.POST.get("like", False)
@@ -265,27 +273,18 @@ class RegisteredUserUpdateView(UpdateView):
 
 
 def profile_picture_upload(request):
+
     user_id = request.session["user_id"]
     current_registered_user = RegisteredUser.objects.get(pk=user_id)
     if request.method == "POST" and request.FILES["myfile"]:
-        # form = UploadAvatarForm(request.POST, request.FILES)
-        # if form.is_valid:
-        # form.save(update_fields=["image"])
-        #   img_obj = form.instance
-        #  form.save()
-        # current_registered_user.image = img_obj
-        # current_registered_user.save(update_fields=["image"])
-        # img_obj = form.instance
         newfile = request.FILES["myfile"]
         current_registered_user.image = newfile
         current_registered_user.save()
         fs = FileSystemStorage()
         filename = fs.save(newfile.name, newfile)
         img_obj_url = fs.url(filename)
-        context = {
-            "img_obj_url": img_obj_url,
-            "cur_user_img": current_registered_user.image,
-        }
+        context = {"current_registered_user": current_registered_user}
         return render(request, "newsite/uploadimage.html", context)
     else:
-        return render(request, "newsite/uploadimage.html")
+        context = {"current_registered_user": current_registered_user}
+        return render(request, "newsite/uploadimage.html", context)

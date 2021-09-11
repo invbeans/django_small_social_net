@@ -15,7 +15,11 @@
         {% else %}{% url 'show_user' current_registered_user.id %}{% endif %}"><h1>Аккаунт юзера {{ current_registered_user.login }}!</h1></a>
         <h2>{{ current_registered_user.name }} {{ current_registered_user.surname }} {{ current_registered_user.fathers_name }}</h2>
         
-        <h4>{{ current_post.title }} :: {{ current_post.datetime }}</h4>
+        <h4>
+            {% if cur_user_img %}
+            <img src="{{ cur_user_img.url }}" alt="connect" style="max-height:30px; border-radius: 50%;">
+            {% endif %}
+            {{ current_post.title }} :: {{ current_post.datetime }}</h4>
         <p><pre>{{ current_post.content }}</pre></p>
         <form id="like_trigger" action="" method="POST" name="like_trigger">
             {% csrf_token %}

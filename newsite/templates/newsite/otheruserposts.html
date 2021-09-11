@@ -15,7 +15,12 @@
         <h2>{{ current_registered_user.name }} {{ current_registered_user.surname }} {{ current_registered_user.fathers_name }}</h2>
         <h3>Ну-ка че он там написюкал:</h3>
         {% for user_post in current_user_posts %}
-        <a href = "{% if current_registered_user.custom_url %}{% url 'current_post' current_registered_user.custom_url user_post.id %}{% else %}{% url 'current_post' current_registered_user.id user_post.id %}{% endif %}"><h4>{{ user_post.title }} :: {{ user_post.datetime }}</h4></a>
+        <a href = "{% if current_registered_user.custom_url %}{% url 'current_post' current_registered_user.custom_url user_post.id %}{% else %}{% url 'current_post' current_registered_user.id user_post.id %}{% endif %}">
+            <h4>
+                {% if cur_user_img %}
+                <img src="{{ cur_user_img.url }}" alt="connect" style="max-height:30px; border-radius: 50%;">
+                {% endif %}
+                {{ user_post.title }} :: {{ user_post.datetime }}</h4></a>
         <p><pre>{{ user_post.content }}</pre></p>
         <form id="like_trigger" action="" method="POST" name="like_trigger">
             {% csrf_token %}

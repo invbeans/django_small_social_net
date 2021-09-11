@@ -13,7 +13,12 @@
     <button type="submit">Загрузить</button>
     </form>
 
-    <img src="{{ cur_user_img.url }}" alt="connect" style="max-height:300px; border-radius: 50%;">
+    {% if current_registered_user.image %}
+    <img src="{{ current_registered_user.image.url }}" alt="connect" style="max-height:100px; border-radius: 50%;">
+    {% endif %}
+    <a href="{% if current_registered_user.custom_url %}{% url 'show_user' current_registered_user.custom_url %}{% else %}{% url 'show_user' current_registered_user.id %}{% endif %}">
+        <p>Назад на страницу</p>
+    </a>
    
 </body>
 
