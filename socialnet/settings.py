@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
+import django_heroku
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-9)(temy&%99^lno=#lyxg_zmr@8!*bi#c^**k(k_8swdz+7__="
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django-site-of-haos.herokuapp.com']
 
 
 # Application definition
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -135,7 +138,8 @@ _PATH = os.path.abspath(os.path.dirname(__file__))
 MEDIA_URL = "/newsite/templates/newsite/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "newsite/templates/newsite/media")
 
-STATIC_ROOT = os.path.join(_PATH, "files", "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/"
 STATICFILES_DIRS = (os.path.join(_PATH, "static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -149,3 +153,6 @@ ADMIN_MEDIA_PREFIX = "/static/admin/"
 
 # Path where media is stored
 # MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
