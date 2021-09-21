@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
-import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -155,4 +154,5 @@ ADMIN_MEDIA_PREFIX = "/static/admin/"
 # MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 # Activate Django-Heroku.
+import django_heroku
 django_heroku.settings(locals())
